@@ -9,14 +9,12 @@ The goal of this checkpoint is to understand the **Instacart Market Basket Analy
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Dataset](#dataset)
-- [Repository Structure](#repository-structure)
-- [Setup](#setup)
-- [How to Run](#how-to-run)
-- [EDA Results (with Figures)](#eda-results-with-figures)
-- [Key Findings Summary](#key-findings-summary)
-- [Notes / Assumptions](#notes--assumptions)
-- [Next Steps](#next-steps)
-- [Citation](#citation)
+- [Repository Structure](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#repository-structure-)
+- [How to Run](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#how-to-run-)
+- [EDA Results](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#eda-results-)
+- [Key Findings Summary](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#key-findings-summary-)
+- [Next Steps](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#next-steps-)
+- [Citation](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#citation-)
 
 ---
 
@@ -37,14 +35,15 @@ In this checkpoint, we run EDA on the Instacart dataset to quantify these issues
 ### Expected path used in notebook
 Place the dataset `.csv` files in the same directory as the notebook (or adjust paths as needed). The core files required are:
 
-```text
 orders.csv
 products.csv
 order_products__train.csv
 aisles.csv
 departments.csv
 
-## Repository Structure
+---
+
+## Repository Structure:- 
 
 .
 ├── 537000542_project_checkpoint1.ipynb
@@ -55,7 +54,7 @@ departments.csv
         ├── basket_size_distribution.png
         └── sparsity_map.png
 
-## How to Run
+## How to Run:-
 
 #Google Colab
 
@@ -65,7 +64,8 @@ Open 537000542_project_checkpoint1.ipynb in Google Colab.
 
 Run all cells from top to bottom. (Note: The notebook loads a 100k row subset initially to ensure it runs fast in Colab memory).
 
-## EDA Results (with Figures)
+## EDA Results:- 
+
 1) Item Support Distribution (The Long Tail)
 
 What this shows: The frequency (support) of items ranked by popularity follows a strict "Power Law" distribution.
@@ -84,7 +84,7 @@ What this shows: A visual representation of the non-zero interactions between us
 
 Why it matters: Our sparsity audit calculated a matrix sparsity of 99.92%. Most users buy only a tiny fraction of the available catalog, creating a massive cold-start problem. This severely limits standard collaborative filtering without significant pre-processing.
 
-## Key Findings Summary
+## Key Findings Summary:- 
 
 Popularity Bias: Strong long-tail behavior in item support necessitates Minimum Support thresholds.
 
@@ -94,14 +94,16 @@ Data Sparsity: The user-item matrix is 99.92% sparse, making standard collaborat
 
 Implicit Feedback: Without explicit 1-5 star ratings, models must rely on the reordered flag as a proxy for user satisfaction.
 
-## Next Steps
+## Next Steps:-
+
 Threshold Sensitivity: Analyze how the distribution of Rule Lift changes as the Minimum Support threshold is lowered in a 99% sparse environment.
 
 Sequential vs. Static: Evaluate whether Sequential Pattern Mining approaches can outperform static Frequent Itemset Mining in predicting next-basket contents.
 
 Feature-Based Clustering: Test if clustering products by textual keywords (via product_name) before running Association Rules reveals stronger cross-department patterns than using raw Product IDs.
 
-## Citation
+## Citation:-
+
 If you use this dataset or findings, please cite:
 
 "An Embedding-Based Grocery Search Model at Instacart". SIGIR eCom 2022
