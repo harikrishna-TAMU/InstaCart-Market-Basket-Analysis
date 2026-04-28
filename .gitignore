@@ -1,0 +1,27 @@
+# Large data files — download from Kaggle
+*.csv
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# PDF deliverable (not needed in repo)
+*.pdf
+
+# Data Mining Project dataset folder
+Data Mining Project dataset/

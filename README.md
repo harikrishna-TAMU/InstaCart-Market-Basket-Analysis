@@ -1,111 +1,153 @@
-# Instacart Market Basket Analysis  
-**CSCE 676: Data Mining — Spring 2026** **Checkpoint 1 — Dataset Comparison, Selection, and Exploratory Data Analysis (EDA)**
+# Instacart Market Basket Analysis — Mining Patterns in 3 Million Grocery Orders
 
-This repository contains the work for **Checkpoint 1** of the course project by Hari Krishna Shivanathri.  
-The goal of this checkpoint is to understand the **Instacart Market Basket Analysis** dataset and extract insights that affect **frequent itemset mining**, **association rules**, and **temporal sequential mining** (such as sparsity, long-tail popularity bias, and implicit feedback).
-
----
-
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Dataset](#dataset)
-- [Repository Structure](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#repository-structure-)
-- [How to Run](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#how-to-run-)
-- [EDA Results](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#eda-results-)
-- [Key Findings Summary](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#key-findings-summary-)
-- [Next Steps](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#next-steps-)
-- [Citation](https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis/edit/main/README.md#citation-)
+**Author:** Hari Krishna Shivanathri  
+**Course:** CSCE 676 — Data Mining and Analysis (Spring 2026)  
+**Student ID:** 537000542
 
 ---
 
-## Project Overview
-Market basket analysis is challenging because:
-- product purchases follow a **long-tail / popularity bias**,
-- the user-item interaction matrix is incredibly **sparse** (**cold start**),
-- we only have **implicit feedback** (what was bought and the `reordered` flag, not explicit ratings),
-- purchase intervals and restocking behavior matter (**temporal effects**).
+## 📋 Project Summary
 
-In this checkpoint, we run EDA on the Instacart dataset to quantify these issues and prepare for building data mining models (like Apriori and FP-Growth) in later checkpoints.
+This project applies association rule mining, text-based product clustering, and sequential pattern mining to the **Instacart Market Basket Analysis** dataset (~3.4 million orders from 200,000+ users) to uncover actionable purchasing patterns for grocery recommendation systems. We go beyond simple popularity rankings to find co-purchase relationships, latent product groupings hidden in product names, and temporal purchasing sequences.
 
 ---
 
-## Dataset
-**Dataset:** Instacart Market Basket Analysis DataSet (SIGIR eCom 2022 / Kaggle)
+## 🎥 Project Video
 
-### Expected path used in notebook
-Place the dataset `.csv` files in the same directory as the notebook (or adjust paths as needed). The core files required are:
-
-orders.csv
-products.csv
-order_products__train.csv
-aisles.csv
-departments.csv
+> **Video Link:**(https://www.youtube.com/watch?v=KyAHsA2rg-8)
 
 ---
 
-## Repository Structure:- 
+## 📓 Main Notebook
 
-.
-├── 537000542_project_checkpoint1.ipynb
-├── README.md
-└── assets/
-    └── figures/
-        ├── item_support_longtail.png
-        ├── basket_size_distribution.png
-        └── sparsity_map.png
+👉 **[`main_notebook.ipynb`](main_notebook.ipynb)** — The complete, narrative-driven analysis containing all EDA, research questions, results, and interpretation.
 
-## How to Run:-
+Previous checkpoint notebooks are available in the [`checkpoints/`](checkpoints/) folder for reference.
 
-#Google Colab
+---
 
-Upload the dataset .csv files to your Colab workspace.
+## 🔬 Research Questions
 
-Open 537000542_project_checkpoint1.ipynb in Google Colab.
+| RQ | Question | Algorithm(s) | Type |
+|:---:|---|---|---|
+| **RQ1** | What product co-purchases have the highest lift, beyond baseline popularity? | Apriori + Association Rules | Course Technique ✓ |
+| **RQ2** | Can TF-IDF keyword extraction from product names reveal latent product groups that the existing aisle/department taxonomy misses? | TF-IDF + K-Means Clustering | Course Technique ✓ |
+| **RQ3** | Do temporal purchase sequences (A → B → C) reveal directional patterns that unordered co-occurrence (Apriori) cannot detect? | PrefixSpan Sequential Mining | External Technique ✓ |
 
-Run all cells from top to bottom. (Note: The notebook loads a 100k row subset initially to ensure it runs fast in Colab memory).
+---
 
-## EDA Results:- 
+## 📊 Data Section
 
-1) Item Support Distribution (The Long Tail)
+### Source
+- **Dataset:** [Instacart Market Basket Analysis (Kaggle)](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis)
+- **Size:** ~3.4 million orders from 200,000+ users across 49,688 products
 
-What this shows: The frequency (support) of items ranked by popularity follows a strict "Power Law" distribution.
+### Data Files
+| File | Description | Rows |
+|---|---|---|
+| `orders.csv` | Order metadata (user, time, day of week) | ~3.4M |
+| `order_products__prior.csv` | Products in prior orders | ~32M |
+| `order_products__train.csv` | Products in training orders | ~1.38M |
+| `products.csv` | Product names, aisle, department | ~50K |
+| `aisles.csv` | Aisle names | 134 |
+| `departments.csv` | Department names | 21 |
 
-Why it matters: This long-tail distribution proves the absolute necessity of setting a Minimum Support threshold. Frequent itemset mining algorithms (like Apriori) only work effectively if we can filter out the massive volume of niche items in the tail.
+### Preprocessing
+- Merged all tables into a unified DataFrame on shared keys (`order_id`, `product_id`, `aisle_id`, `department_id`)
+- Applied **top-200 product filter** for Apriori (RQ1) to manage sparsity (99.92% sparse)
+- Used **department-level abstraction** (21 categories) for PrefixSpan (RQ3) to reduce vocabulary
+- **Sampled 5,000 users** for sequential mining to ensure Colab feasibility
 
-2) Basket Size Distribution
+> **Note:** The dataset CSV files are not included in this repository due to size. Download them from the [Kaggle competition page](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis).
 
-What this shows: The distribution of the number of items purchased per order.
+---
 
-Why it matters: Apriori's computational complexity depends heavily on basket size. Since the average basket size is relatively small and manageable, standard frequent itemset mining techniques remain computationally feasible for this dataset.
+## 🚀 How to Reproduce
 
-3) User-Item Matrix Sparsity
+This project was developed in **Google Colab**.
 
-What this shows: A visual representation of the non-zero interactions between users/orders and products.
+### Option 1: Google Colab (Recommended)
+1. Open `main_notebook.ipynb` in Google Colab
+2. Upload the Instacart dataset CSV files to the Colab runtime (or mount Google Drive)
+3. Run all cells from top to bottom
 
-Why it matters: Our sparsity audit calculated a matrix sparsity of 99.92%. Most users buy only a tiny fraction of the available catalog, creating a massive cold-start problem. This severely limits standard collaborative filtering without significant pre-processing.
+### Option 2: Local Environment
+```bash
+# Clone the repository
+git clone https://github.com/harikrishna-TAMU/InstaCart-Market-Basket-Analysis.git
+cd InstaCart-Market-Basket-Analysis
 
-## Key Findings Summary:- 
+# Install dependencies
+pip install -r requirements.txt
 
-Popularity Bias: Strong long-tail behavior in item support necessitates Minimum Support thresholds.
+# Download the Instacart dataset from Kaggle and place CSV files in the project root
 
-Algorithmic Feasibility: The average basket size makes Apriori and FP-Growth algorithms viable.
+# Open the notebook
+jupyter notebook main_notebook.ipynb
+```
 
-Data Sparsity: The user-item matrix is 99.92% sparse, making standard collaborative filtering difficult.
+---
 
-Implicit Feedback: Without explicit 1-5 star ratings, models must rely on the reordered flag as a proxy for user satisfaction.
+## 📦 Key Dependencies
 
-## Next Steps:-
+| Package | Version | Purpose |
+|---|---|---|
+| `pandas` | ≥ 2.0.0 | Data manipulation and analysis |
+| `numpy` | ≥ 1.24.0 | Numerical computing |
+| `matplotlib` | ≥ 3.7.0 | Visualization |
+| `seaborn` | ≥ 0.12.0 | Statistical visualization |
+| `scikit-learn` | ≥ 1.3.0 | TF-IDF vectorization, K-Means clustering, silhouette analysis |
+| `mlxtend` | ≥ 0.22.0 | Apriori algorithm and association rules |
+| `prefixspan` | ≥ 0.5.0 | PrefixSpan sequential pattern mining (external technique) |
 
-Threshold Sensitivity: Analyze how the distribution of Rule Lift changes as the Minimum Support threshold is lowered in a 99% sparse environment.
+See [`requirements.txt`](requirements.txt) for the full list.
 
-Sequential vs. Static: Evaluate whether Sequential Pattern Mining approaches can outperform static Frequent Itemset Mining in predicting next-basket contents.
+---
 
-Feature-Based Clustering: Test if clustering products by textual keywords (via product_name) before running Association Rules reveals stronger cross-department patterns than using raw Product IDs.
+## 🗂️ Repository Structure
 
-## Citation:-
+```
+InstaCart-Market-Basket-Analysis/
+├── main_notebook.ipynb              # Main analysis notebook (polished, narrative-driven)
+├── README.md                        # This file
+├── requirements.txt                 # Python dependencies
+├── .gitignore                       # Git ignore rules
+└── checkpoints/
+    ├── checkpoint_1.ipynb           # Checkpoint 1: EDA & dataset selection
+    └── checkpoint_2.ipynb           # Checkpoint 2: RQ formulation & POC runs
+```
 
-If you use this dataset or findings, please cite:
+---
 
-"An Embedding-Based Grocery Search Model at Instacart". SIGIR eCom 2022
+## 📈 Results Summary
 
-Instacart Market Basket Analysis DataSet Documentation / Kaggle Competition (2017).
+### RQ1 — Association Rules (Apriori)
+- **178 frequent itemsets** found at min_support = 0.01
+- **52 association rules** with lift > 1.5 extracted
+- **Top rule:** Large Lemon ↔ Limes (lift = 3.34)
+- **Key Insight:** The highest-lift rules involve niche/specialty products, not universally popular items like bananas — confirming that **lift is the right metric** for surfacing non-obvious co-purchase insights
+
+### RQ2 — Product Clustering (TF-IDF + K-Means)
+- TF-IDF vectorized **49,688 product names** into 500-feature space (unigrams + bigrams)
+- Silhouette analysis identified **k = 14** as optimal cluster count (silhouette score: 0.0584)
+- Each cluster has a clear, interpretable theme (e.g., "cheese", "organic/baby", "ice cream", "sauce/pasta", "yogurt", "chocolate", "gluten-free")
+- **Key Insight:** TF-IDF clusters reveal **latent product attributes** (organic, flavor, dietary) that the existing aisle/department taxonomy does not capture
+
+### RQ3 — Sequential Pattern Mining (PrefixSpan)
+- Constructed temporal purchase sequences for **5,000 sampled users** at department level
+- PrefixSpan discovered **directional patterns** like `produce → dairy eggs → snacks` that Apriori cannot detect
+- **Key Insight:** Temporal ordering adds value — the **direction of purchase** (A → B, not just A ∧ B) matters for recommendation systems and understanding consumer behavior
+
+### Cross-RQ Comparison
+- Apriori finds **what** co-occurs; PrefixSpan reveals **when** (in what order)
+- Both approaches are complementary — combining them gives retailers both basket-level and journey-level insights
+
+---
+
+## 📚 References
+
+1. **Instacart Market Basket Analysis.** Kaggle Competition, 2017. [Link](https://www.kaggle.com/c/instacart-market-basket-analysis)
+2. Agrawal, R. and Srikant, R. *Fast Algorithms for Mining Association Rules in Large Databases.* VLDB 1994.
+3. Pei, J. et al. *PrefixSpan: Mining Sequential Patterns Efficiently by Prefix-Projected Pattern Growth.* ICDE 2001.
+4. Raschka, S. *MLxtend: Providing machine learning and data science utilities.* JOSS, 2018.
+5. Xie, Y. et al. *An Embedding-Based Grocery Search Model at Instacart.* SIGIR eCom 2022.
